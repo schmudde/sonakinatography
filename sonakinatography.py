@@ -10,7 +10,7 @@ def write_svg(svg, path):
 ############# Painter
 
 def print_square(square):
-  print square['size'],
+  print square['color'],
 
 def print_line():
   print "|",
@@ -34,7 +34,7 @@ class Shape:
     return ((x*self.square_size), (y*self.square_size))
 
   def __init__(self, lane, beat, max_beat):
-    self.color = (lane['size'] - 1)
+    self.color = (lane['color'] - 1)
     self.x, self.y = self.scale_square(lane['lane'], beat)
     self.y = abs(self.y - (max_beat * self.square_size))
 
@@ -48,11 +48,11 @@ class Shape:
 # Builder
 
 def reset_lane(lane):
-  if lane['size'] == 1:
-    lane['size'] = 8
+  if lane['color'] == 1:
+    lane['color'] = 8
   else:
-    lane['size'] -= 1
-  lane['countdown'] = lane['size']
+    lane['color'] -= 1
+  lane['countdown'] = lane['color']
   return lane
 
 def build_row(canvas, grid_objects, beat, max_beat):
@@ -73,27 +73,27 @@ def build_columns(canvas, grid_objects, max_beat):
 
 def simple_shapes():
   dwg_shapes = svgwrite.Drawing('dwg_shapes.svg', profile='tiny')
-  grid_object1 = {'size': 1, 'lane': 0}
+  grid_object1 = {'color': 2, 'lane': 0}
   shape1 = Shape(grid_object1, 1, 1)
   shape1.paint_square(dwg_shapes)
 
-  grid_object2 = {'size': 1, 'lane': 1}
+  grid_object2 = {'color': 7, 'lane': 1}
   shape2 = Shape(grid_object2, 1, 1)
   shape2.paint_line(dwg_shapes)
 
   dwg_shapes.save()
 
-def matrix_traverser(max_beat):
+def build_matrix(max_beat):
   dwg = svgwrite.Drawing('test.svg', profile='tiny')
 
-  grid_objects = [{'size': 1, 'countdown': 1, 'lane': 0},
-                  {'size': 2, 'countdown': 2, 'lane': 1},
-                  {'size': 3, 'countdown': 3, 'lane': 2},
-                  {'size': 4, 'countdown': 4, 'lane': 3},
-                  {'size': 5, 'countdown': 5, 'lane': 4},
-                  {'size': 6, 'countdown': 6, 'lane': 5},
-                  {'size': 7, 'countdown': 7, 'lane': 6},
-                  {'size': 8, 'countdown': 8, 'lane': 7}]
+  grid_objects = [{'color': 1, 'countdown': 1, 'lane': 0},
+                  {'color': 2, 'countdown': 2, 'lane': 1},
+                  {'color': 3, 'countdown': 3, 'lane': 2},
+                  {'color': 4, 'countdown': 4, 'lane': 3},
+                  {'color': 5, 'countdown': 5, 'lane': 4},
+                  {'color': 6, 'countdown': 6, 'lane': 5},
+                  {'color': 7, 'countdown': 7, 'lane': 6},
+                  {'color': 8, 'countdown': 8, 'lane': 7}]
   build_columns(dwg, grid_objects, max_beat)
   dwg.save()
 
