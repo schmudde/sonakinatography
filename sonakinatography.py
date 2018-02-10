@@ -7,9 +7,7 @@ def write_svg(svg, path):
     f.write(svg.tostring())
   return {'kind': 'file', 'content_type': 'image/svg+xml', 'coder': 'svg'}
 
-dwg = svgwrite.Drawing('test.svg', profile='tiny')
-
-# Painter
+############# Painter
 
 def print_square(square):
   print square['size'],
@@ -40,12 +38,12 @@ class Shape:
     self.x, self.y = self.scale_square(lane['lane'], beat)
     self.y = abs(self.y - (max_beat * self.square_size))
 
-  def paint_square(self):
-    dwg.add(dwg.rect((self.x, self.y), (self.square_size, self.square_size), fill=self.color_grid[self.color]))
+  def paint_square(self, canvas):
+    canvas.add(canvas.rect((self.x, self.y), (self.square_size, self.square_size), fill=self.color_grid[self.color]))
 
-  def paint_line(self):
+  def paint_line(self, canvas):
     self.x = self.x + (self.square_size / 2) - 2
-    dwg.add(dwg.rect((self.x, self.y), (3, self.square_size), fill=self.color_grid[self.color]))
+    canvas.add(canvas.rect((self.x, self.y), (3, self.square_size), fill=self.color_grid[self.color]))
 
 # Builder
 
@@ -57,23 +55,37 @@ def reset_lane(lane):
   lane['countdown'] = lane['size']
   return lane
 
-def build_row(grid_objects, beat, max_beat):
+def build_row(canvas, grid_objects, beat, max_beat):
   for lane in grid_objects:
     lane['countdown'] -= 1
     shape = Shape(lane, beat, max_beat)
     if lane['countdown'] == 0:
-      shape.paint_square()
+      shape.paint_square(canvas)
       lane = reset_lane(lane)
     else:
-      shape.paint_line()
+      shape.paint_line(canvas)
 
-def build_columns(grid_objects, max_beat):
+def build_columns(canvas, grid_objects, max_beat):
   beat = 0
   while beat < max_beat:
     beat += 1
-    build_row(grid_objects, beat, max_beat)
+    build_row(canvas, grid_objects, beat, max_beat)
+
+def simple_shapes():
+  dwg_shapes = svgwrite.Drawing('dwg_shapes.svg', profile='tiny')
+  grid_object1 = {'size': 1, 'lane': 0}
+  shape1 = Shape(grid_object1, 1, 1)
+  shape1.paint_square(dwg_shapes)
+
+  grid_object2 = {'size': 1, 'lane': 1}
+  shape2 = Shape(grid_object2, 1, 1)
+  shape2.paint_line(dwg_shapes)
+
+  dwg_shapes.save()
 
 def matrix_traverser(max_beat):
+  dwg = svgwrite.Drawing('test.svg', profile='tiny')
+
   grid_objects = [{'size': 1, 'countdown': 1, 'lane': 0},
                   {'size': 2, 'countdown': 2, 'lane': 1},
                   {'size': 3, 'countdown': 3, 'lane': 2},
@@ -82,10 +94,8 @@ def matrix_traverser(max_beat):
                   {'size': 6, 'countdown': 6, 'lane': 5},
                   {'size': 7, 'countdown': 7, 'lane': 6},
                   {'size': 8, 'countdown': 8, 'lane': 7}]
-  build_columns(grid_objects, max_beat)
+  build_columns(dwg, grid_objects, max_beat)
   dwg.save()
 
 # (execfile('sonakinatography.py'))
-# matrix_traverser(10)
-
-# dwg.save()
+# matrix_traverser(30)
