@@ -31,11 +31,12 @@ class Shape:
   square_size = 20
 
   def scale_square(self, x, y):
+    x -= 1 # Start the x-axis scaling at 0, not 1
     return ((x*self.square_size), (y*self.square_size))
 
-  def __init__(self, lane, beat = 1, max_beat = 1):
-    self.color = (lane['color'] - 1)
-    self.x, self.y = self.scale_square(lane['lane'], beat)
+  def __init__(self, instrument, beat = 1, max_beat = 1):
+    self.color = (instrument['color'] - 1)
+    self.x, self.y = self.scale_square(instrument['instrument'], beat)
     self.y = abs(self.y - (max_beat * self.square_size))
 
   def paint_square(self, canvas):
@@ -57,21 +58,21 @@ def simple_shapes(shape1, shape2):
 
 ##### Sonakinatography Builder
 
-def reset_lane(lane):
-  if lane['color'] == 1:
-    lane['color'] = 8
+def reset_instrument(instrument):
+  if instrument['color'] == 1:
+    instrument['color'] = 8
   else:
-    lane['color'] -= 1
-  lane['countdown'] = lane['color']
-  return lane
+    instrument['color'] -= 1
+  instrument['countdown'] = instrument['color']
+  return instrument
 
 def build_row(canvas, grid_objects, beat, max_beat):
-  for lane in grid_objects:
-    lane['countdown'] -= 1
-    shape = Shape(lane, beat, max_beat)
-    if lane['countdown'] == 0:
+  for instrument in grid_objects:
+    instrument['countdown'] -= 1
+    shape = Shape(instrument, beat, max_beat)
+    if instrument['countdown'] == 0:
       shape.paint_square(canvas)
-      lane = reset_lane(lane)
+      instrument = reset_instrument(instrument)
     else:
       shape.paint_line(canvas)
 
@@ -84,19 +85,19 @@ def build_columns(canvas, grid_objects, max_beat):
 def build_matrix(max_beat):
   dwg = svgwrite.Drawing('test.svg', profile='tiny')
 
-  grid_objects = [{'color': 1, 'countdown': 1, 'lane': 0},
-                  {'color': 2, 'countdown': 2, 'lane': 1},
-                  {'color': 3, 'countdown': 3, 'lane': 2},
-                  {'color': 4, 'countdown': 4, 'lane': 3},
-                  {'color': 5, 'countdown': 5, 'lane': 4},
-                  {'color': 6, 'countdown': 6, 'lane': 5},
-                  {'color': 7, 'countdown': 7, 'lane': 6},
-                  {'color': 8, 'countdown': 8, 'lane': 7}]
+  grid_objects = [{'color': 1, 'countdown': 1, 'instrument': 1},
+                  {'color': 2, 'countdown': 2, 'instrument': 2},
+                  {'color': 3, 'countdown': 3, 'instrument': 3},
+                  {'color': 4, 'countdown': 4, 'instrument': 4},
+                  {'color': 5, 'countdown': 5, 'instrument': 5},
+                  {'color': 6, 'countdown': 6, 'instrument': 6},
+                  {'color': 7, 'countdown': 7, 'instrument': 7},
+                  {'color': 8, 'countdown': 8, 'instrument': 8}]
   build_columns(dwg, grid_objects, max_beat)
   return dwg
 
 def run_simple():
-  draw = simple_shapes({'color': 3, 'lane': 0}, {'color': 4, 'lane': 2})
+  draw = simple_shapes({'color': 2, 'instrument': 1}, {'color': 2, 'instrument': 3})
   draw.save()
 
 def run_full(no_of_beats):
