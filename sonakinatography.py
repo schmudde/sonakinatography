@@ -33,7 +33,7 @@ class Shape:
   def scale_square(self, x, y):
     return ((x*self.square_size), (y*self.square_size))
 
-  def __init__(self, lane, beat, max_beat):
+  def __init__(self, lane, beat = 1, max_beat = 1):
     self.color = (lane['color'] - 1)
     self.x, self.y = self.scale_square(lane['lane'], beat)
     self.y = abs(self.y - (max_beat * self.square_size))
@@ -45,7 +45,17 @@ class Shape:
     self.x = self.x + (self.square_size / 2) - 2
     canvas.add(canvas.rect((self.x, self.y), (3, self.square_size), fill=self.color_grid[self.color]))
 
-# Builder
+##### Simple Example
+
+def simple_shapes(shape1, shape2):
+  dwg_shapes = svgwrite.Drawing('dwg_shapes.svg', (160,20))
+
+  Shape(shape1).paint_square(dwg_shapes)
+  Shape(shape2).paint_line(dwg_shapes)
+
+  return dwg_shapes
+
+##### Sonakinatography Builder
 
 def reset_lane(lane):
   if lane['color'] == 1:
@@ -71,18 +81,6 @@ def build_columns(canvas, grid_objects, max_beat):
     beat += 1
     build_row(canvas, grid_objects, beat, max_beat)
 
-def simple_shapes():
-  dwg_shapes = svgwrite.Drawing('dwg_shapes.svg', profile='tiny')
-  grid_object1 = {'color': 2, 'lane': 0}
-  shape1 = Shape(grid_object1, 1, 1)
-  shape1.paint_square(dwg_shapes)
-
-  grid_object2 = {'color': 7, 'lane': 1}
-  shape2 = Shape(grid_object2, 1, 1)
-  shape2.paint_line(dwg_shapes)
-
-  dwg_shapes.save()
-
 def build_matrix(max_beat):
   dwg = svgwrite.Drawing('test.svg', profile='tiny')
 
@@ -95,7 +93,15 @@ def build_matrix(max_beat):
                   {'color': 7, 'countdown': 7, 'lane': 6},
                   {'color': 8, 'countdown': 8, 'lane': 7}]
   build_columns(dwg, grid_objects, max_beat)
-  dwg.save()
+  return dwg
+
+def run_simple():
+  draw = simple_shapes({'color': 3, 'lane': 0}, {'color': 4, 'lane': 2})
+  draw.save()
+
+def run_full(no_of_beats):
+  draw = build_matrix(no_of_beats)
+  draw.save()
 
 # (execfile('sonakinatography.py'))
-# matrix_traverser(30)
+# run_full(35)
