@@ -17,6 +17,9 @@ def print_line():
 
 class Shape:
 
+  # TODO: Adjust colors correctly
+  # TODO: Does not loop correctly after a straight line
+
   yellow_green=svgwrite.rgb(0, 204, 0)   # Yellow Green
   green=svgwrite.rgb(0, 102, 0)          # Green
   blue=svgwrite.rgb(0, 0, 255)           # Blue
@@ -58,6 +61,13 @@ def simple_shapes(shape1, shape2):
 
 ##### Sonakinatography Builder
 
+def change_advancer(number_grid_y, func):
+  if number_grid_y == number_grid_max_y:
+    func = lambda y: y-1
+  elif number_grid_y == 0:
+    func = lambda y: y+1
+  return func
+
 def reset_instrument(instrument):
   if instrument['color'] == 1:
     instrument['color'] = 8
@@ -68,7 +78,7 @@ def reset_instrument(instrument):
 
 def build_row(canvas, grid_objects, beat, max_beat):
   for instrument in grid_objects:
-    instrument['countdown'] -= 1
+    instrument['countdown'] = instrument['advancer'](instrument['countdown'])
     shape = Shape(instrument, beat, max_beat)
     if instrument['countdown'] == 0:
       shape.paint_square(canvas)
@@ -85,14 +95,14 @@ def build_columns(canvas, grid_objects, max_beat):
 def build_matrix(max_beat):
   dwg = svgwrite.Drawing('test.svg', profile='tiny')
 
-  grid_objects = [{'color': 1, 'countdown': 1, 'instrument': 1},
-                  {'color': 2, 'countdown': 2, 'instrument': 2},
-                  {'color': 3, 'countdown': 3, 'instrument': 3},
-                  {'color': 4, 'countdown': 4, 'instrument': 4},
-                  {'color': 5, 'countdown': 5, 'instrument': 5},
-                  {'color': 6, 'countdown': 6, 'instrument': 6},
-                  {'color': 7, 'countdown': 7, 'instrument': 7},
-                  {'color': 8, 'countdown': 8, 'instrument': 8}]
+  grid_objects = [{'color': 1, 'countdown': 1, 'instrument': 1, 'advancer': lambda y: y-1},
+                  {'color': 2, 'countdown': 2, 'instrument': 2, 'advancer': lambda y: y-1},
+                  {'color': 3, 'countdown': 3, 'instrument': 3, 'advancer': lambda y: y-1},
+                  {'color': 4, 'countdown': 4, 'instrument': 4, 'advancer': lambda y: y-1},
+                  {'color': 5, 'countdown': 5, 'instrument': 5, 'advancer': lambda y: y-1},
+                  {'color': 6, 'countdown': 6, 'instrument': 6, 'advancer': lambda y: y-1},
+                  {'color': 7, 'countdown': 7, 'instrument': 7, 'advancer': lambda y: y-1},
+                  {'color': 8, 'countdown': 8, 'instrument': 8, 'advancer': lambda y: y-1}]
   build_columns(dwg, grid_objects, max_beat)
   return dwg
 

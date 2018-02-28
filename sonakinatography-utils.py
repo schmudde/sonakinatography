@@ -44,13 +44,6 @@ number_grid = [[2, 3, 4, 5, 6, 7, 8, 1],
 number_grid_max_y = len(number_grid)-1
 grid_state = number_grid[number_grid_max_y]
 
-def change_advancer(number_grid_y, func):
-  if number_grid_y == number_grid_max_y:
-    func = lambda y: y-1
-  elif number_grid_y == 0:
-    func = lambda y: y+1
-  return func
-
 def grid_reader(number_grid_y):
   return abs(number_grid_y - number_grid_max_y)
 
