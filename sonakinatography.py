@@ -18,7 +18,6 @@ def print_line():
 class Shape:
 
   # TODO: Adjust colors correctly
-  # TODO: Does not loop correctly after a straight line
 
   yellow_green=svgwrite.rgb(0, 204, 0)   # Yellow Green
   green=svgwrite.rgb(0, 102, 0)          # Green
@@ -61,28 +60,36 @@ def simple_shapes(shape1, shape2):
 
 ##### Sonakinatography Builder
 
-def change_advancer(number_grid_y, func):
-  if number_grid_y == number_grid_max_y:
+color_grid = [[2, 3, 4, 5, 6, 7, 8, 1],
+              [3, 4, 5, 6, 7, 8, 1, 2],
+              [4, 5, 6, 7, 8, 1, 2, 3],
+              [5, 6, 7, 8, 1, 2, 3, 4],
+              [6, 7, 8, 1, 2, 3, 4, 5],
+              [7, 8, 1, 2, 3, 4, 5, 6],
+              [8, 1, 2, 3, 4, 5, 6, 7],
+              [1, 2, 3, 4, 5, 6, 7, 8]]
+color_grid_max_y = len(color_grid)-1
+
+def change_advancer(color_grid_y, func):
+  if color_grid_y == color_grid_max_y:
     func = lambda y: y-1
-  elif number_grid_y == 0:
+  elif color_grid_y == 0:
     func = lambda y: y+1
   return func
 
 def reset_instrument(instrument):
-  if instrument['color'] == 1:
-    instrument['color'] = 8
-  else:
-    instrument['color'] -= 1
-  instrument['countdown'] = instrument['color']
-  return instrument
+  instrument['advancer'] = change_advancer(instrument['color_grid_val'], instrument['advancer'])
+  instrument['color_grid_val'] = instrument['advancer'](instrument['color_grid_val'])
+  instrument['countdown'] = color_grid[instrument['color_grid_val']][instrument['instrument']-1]
 
 def build_row(canvas, grid_objects, beat, max_beat):
   for instrument in grid_objects:
-    instrument['countdown'] = instrument['advancer'](instrument['countdown'])
+    instrument['countdown'] -= 1
+    instrument['color'] = color_grid[instrument['color_grid_val']][instrument['instrument']-1]
     shape = Shape(instrument, beat, max_beat)
     if instrument['countdown'] == 0:
       shape.paint_square(canvas)
-      instrument = reset_instrument(instrument)
+      reset_instrument(instrument)
     else:
       shape.paint_line(canvas)
 
@@ -95,14 +102,16 @@ def build_columns(canvas, grid_objects, max_beat):
 def build_matrix(max_beat):
   dwg = svgwrite.Drawing('test.svg', profile='tiny')
 
-  grid_objects = [{'color': 1, 'countdown': 1, 'instrument': 1, 'advancer': lambda y: y-1},
-                  {'color': 2, 'countdown': 2, 'instrument': 2, 'advancer': lambda y: y-1},
-                  {'color': 3, 'countdown': 3, 'instrument': 3, 'advancer': lambda y: y-1},
-                  {'color': 4, 'countdown': 4, 'instrument': 4, 'advancer': lambda y: y-1},
-                  {'color': 5, 'countdown': 5, 'instrument': 5, 'advancer': lambda y: y-1},
-                  {'color': 6, 'countdown': 6, 'instrument': 6, 'advancer': lambda y: y-1},
-                  {'color': 7, 'countdown': 7, 'instrument': 7, 'advancer': lambda y: y-1},
-                  {'color': 8, 'countdown': 8, 'instrument': 8, 'advancer': lambda y: y-1}]
+
+  # TODO: Update reset_instrument and create a software instantiation so that instrument x can start at any number.
+  grid_objects = [{'color': 1, 'countdown': 1, 'instrument': 1, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 2, 'countdown': 2, 'instrument': 2, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 3, 'countdown': 3, 'instrument': 3, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 4, 'countdown': 4, 'instrument': 4, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 5, 'countdown': 5, 'instrument': 5, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 6, 'countdown': 6, 'instrument': 6, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 7, 'countdown': 7, 'instrument': 7, 'advancer': lambda y: y-1, 'color_grid_val': 7},
+                  {'color': 8, 'countdown': 8, 'instrument': 8, 'advancer': lambda y: y-1, 'color_grid_val': 7}]
   build_columns(dwg, grid_objects, max_beat)
   return dwg
 
@@ -115,4 +124,4 @@ def run_full(no_of_beats):
   draw.save()
 
 # (execfile('sonakinatography.py'))
-# run_full(35)
+# run_full(75)
