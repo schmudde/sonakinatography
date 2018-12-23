@@ -10,10 +10,10 @@ def write_svg(svg, path):
 ############# Painter
 
 def print_square(square):
-  print square['color'],
+  print(square['color'])
 
 def print_line():
-  print "|",
+  print("|")
 
 class Shape:
 

@@ -50,7 +50,7 @@ def grid_reader(number_grid_y):
 def print_grid_state(grid_state):
   for x in grid_state:
     if x-1 == 0:
-      print "v",
+      print("v")
     else:
-      print "|",
+      print("|")
   print("")
