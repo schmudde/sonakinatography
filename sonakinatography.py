@@ -100,7 +100,7 @@ def build_columns(canvas, grid_objects, max_beat):
     build_row(canvas, grid_objects, beat, max_beat)
 
 def build_matrix(max_beat):
-  dwg = svgwrite.Drawing('test.svg', profile='tiny')
+  dwg = svgwrite.Drawing('sonakinatography.svg', profile='tiny')
 
 
   # TODO: Update reset_instrument and create a software instantiation so that instrument x can start at any number.
@@ -124,4 +124,3 @@ def run_full(no_of_beats):
   draw.save()
 
 # (execfile('sonakinatography.py'))
-# run_full(75)
