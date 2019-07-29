@@ -10,4 +10,4 @@
 - To run:
     - `python -c "import sonakinatography; sonakinatography.run_full(x)"`
     - Where `x` is the number of iterations the algorithm undertakes. A recommended starting point is `75`.
-- Saved as `sonakinatography.svg` in the same director as `sonakinatography.py`.
+- Saved as `sonakinatography.svg` in the same directory as `sonakinatography.py`.

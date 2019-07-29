@@ -44,6 +44,10 @@ class Shape:
   def paint_square(self, canvas):
     canvas.add(canvas.rect((self.x, self.y), (self.square_size, self.square_size), fill=self.color_grid[self.color]))
 
+  def paint_square_to_group(self, canvas, group):
+    group.add(canvas.rect((self.x, self.y), (self.square_size, self.square_size), fill=self.color_grid[self.color]))
+    # return canvas.rect((self.x, self.y), (self.square_size, self.square_size), fill=self.color_grid[self.color])
+
   def paint_line(self, canvas):
     self.x = self.x + (self.square_size / 2) - 2
     canvas.add(canvas.rect((self.x, self.y), (3, self.square_size), fill=self.color_grid[self.color]))
@@ -124,3 +128,20 @@ def run_full(no_of_beats):
   draw.save()
 
 # (execfile('sonakinatography.py'))
+
+def run_animate(no_of_beats):
+
+    canvas = svgwrite.Drawing('results/animation-test.svg',profile='tiny',size=(600,400))
+
+    def add_instrument_to_group(canvas, shape_group, instrument):
+      shape = Shape(instrument, 1, 1)
+      shape.paint_square_to_group(canvas, shape_group)
+
+    group = canvas.add(canvas.g())
+
+    add_instrument_to_group(canvas, group, {'color': 1, 'countdown': 1, 'instrument': 1, 'advancer': lambda y: y-1, 'color_grid_val': 7})
+    add_instrument_to_group(canvas, group, {'color': 1, 'countdown': 1, 'instrument': 7, 'advancer': lambda y: y-1, 'color_grid_val': 7})
+
+    group.add(canvas.animateTransform("translate","transform",id="polygon",from_="0,0", to="0,450",dur="4s",begin="0s",repeatCount="indefinite"))
+
+    canvas.save()
